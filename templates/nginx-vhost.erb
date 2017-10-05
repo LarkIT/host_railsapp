@@ -1,0 +1,65 @@
+server {
+  server_name <%= @server_name %>;
+  listen <%= @server_port %>;
+  <%- if ( (1 < @ssl_server_port.to_i) and
+          (@ssl_server_port.to_i < 65535) and
+          (! @ssl_cert.nil?) and
+          (! @ssl_key.nil?) ) -%>
+  listen <%= @ssl_server_port %> ssl;
+  ssl_certificate <%= @ssl_dir %>/<%= @name %>.crt;
+  ssl_certificate_key <%= @ssl_dir %>/<%= @name %>.key;
+  ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+
+  #Disables all weak ciphers - updated per https://raymii.org/s/tutorials/Strong_SSL_Security_On_nginx.html
+  ssl_ciphers "EECDH+AESGCM:EDH+AESGCM:ECDHE-RSA-AES128-GCM-SHA256:AES256+EECDH:DHE-RSA-AES128-GCM-SHA256:AES256+EDH:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-RSA-AES128-SHA256:ECDHE-RSA-AES256-SHA:ECDHE-RSA-AES128-SHA:DHE-RSA-AES256-SHA256:DHE-RSA-AES128-SHA256:DHE-RSA-AES256-SHA:DHE-RSA-AES128-SHA:ECDHE-RSA-DES-CBC3-SHA:EDH-RSA-DES-CBC3-SHA:AES256-GCM-SHA384:AES128-GCM-SHA256:AES256-SHA256:AES128-SHA256:AES256-SHA:AES128-SHA:DES-CBC3-SHA:HIGH:!aNULL:!eNULL:!EXPORT:!DES:!MD5:!PSK:!RC4";
+
+  ssl_prefer_server_ciphers on;
+
+  ssl_dhparam <%= @ssl_dir %>/dhparam.pem;
+
+  ssl_session_cache shared:SSL:10m;
+  <%- end -%>
+  <% if @_docroot -%>
+  root <%= @_docroot %>;
+  <% end -%>
+  <%- if @access_log -%>
+  access_log <%= @logdir %>/<%= @access_log %> main;
+  <%- end -%>
+  <%- if @error_log -%>
+  error_log  <%= @logdir %>/<%= @error_log %>  error;
+  <%- end -%>
+  <%- if @passenger_enabled -%>
+  passenger_enabled <%= @passenger_enabled %>;
+  passenger_ruby <%= @rvm_prefix %>/wrappers/<%= @ruby_gemset %>/ruby;
+  passenger_app_env <%= @rails_env %>;
+  <%- end -%>
+  gzip <%= @gzip_enabled %>;
+  <%- if @auth_basic && @auth_file -%>
+  auth_basic    "<%= @auth_realm %>";
+  auth_basic_user_file  <%= @auth_file %>
+  <%- end -%>
+  <%- if ! @vhost_options.empty? -%>
+  ### vhost_options ###
+    <%- @vhost_options.sort.map do |key, val| -%>
+<%=       "  #{key}      #{val};" %>
+    <%- end -%>
+  ### END vhost_options ###
+  <%- end -%>
+  <%- if @asset_cache -%>
+
+  location ~* ^/assets/ {
+    expires max;
+    add_header Cache-Control public;
+    add_header Last-Modified "";
+    add_header ETag "";
+    break;
+  }
+  <%- end -%>
+  <%- if @cable_path -%>
+
+  location <%= @cable_path %> {
+    passenger_app_group_name <%= @name %>_action_cable;
+    passenger_force_max_concurrent_requests_per_process 0;
+  }
+  <%- end -%>
+}

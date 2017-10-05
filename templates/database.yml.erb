@@ -1,0 +1,22 @@
+---
+# PUPPET GENERATED database.yml
+#  -- DO NOT EDIT! Changes will be lost at each puppet run --
+<%
+  # The following makes database.yml only contain the necessary environments
+   @database_config.sort.map do |env, data|
+  # NOTE: the following may need future work when we can "determine" the db host
+  dbhost = data['host'] || @database_hostname
+-%>
+<%   if env.include? @rails_env or env == 'test' -%>
+
+<%=    env -%>:
+<%     data.sort.map do |key, val|
+         if key != 'host' -%>
+<%=        "  #{key}: #{val}" %>
+<%       end
+       end -%>
+<%     if data['adapter'] != 'sqlite3' -%>
+  host:  <%= dbhost %>
+<%     end -%>
+<%   end -%>
+<% end -%>
