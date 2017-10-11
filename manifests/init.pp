@@ -64,7 +64,7 @@ class host_railsapp (
   $appserver                        = $host_railsapp::params::appserver,
   $appserver_config                 = {},
 ) inherits host_railsapp::params {
-
+notify{"Nick $default_database_hostname":}
   # SELinux FContexts
   if str2bool($::selinux) {
     selinux::fcontext { $webroot_dir:
