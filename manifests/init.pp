@@ -65,7 +65,6 @@ class host_railsapp (
   $appserver_config                 = {},
 ) inherits host_railsapp::params {
 
-  notify{"Nick ${trusted['extensions']['pp_environment']}":}
   # SELinux FContexts
   if str2bool($::selinux) {
     selinux::fcontext { $webroot_dir:
