@@ -31,7 +31,6 @@ class host_railsapp::params {
 
   $default_secrets = undef
   $default_rails_version = '4.1.1'
-#  $default_rails_environments = ['development', 'staging', 'production']
   $default_rails_environments = [ $trusted['extensions']['pp_environment'] ]
   $default_database_hostname = '127.0.0.1'
   $default_database_config = {

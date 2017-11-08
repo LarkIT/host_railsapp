@@ -136,7 +136,7 @@ define host_railsapp::rails_environment (
     ensure => directory,
     owner  => $username,
     group  => $groupname,
-    mode   => '0751',
+    mode   => '0771',
   }
 
   # Create a .ruby-version to point at the ruby version
