@@ -182,11 +182,11 @@ define host_railsapp::rails_environment (
   #   $rails_env
   file { $database_yml:
     ensure  => file,
-    content => template('host_railsapp/database.yml.erb'),
     #replace => false,
-    mode    => '0440',
+    mode    => '0460',
     owner   => $username,
     group   => $groupname,
+    content => template('host_railsapp/database.yml.erb'),
   }
 
   # Template uses:
@@ -197,7 +197,7 @@ define host_railsapp::rails_environment (
       ensure  => file,
       content => template('host_railsapp/secrets.yml.erb'),
       #replace => false,
-      mode    => '0440',
+      mode    => '0460',
       owner   => $username,
       group   => $groupname,
     }
