@@ -1,0 +1,8 @@
+---
+host_railsapp::applications: railsapp
+host_railsapp::main_ruby_version: ruby-2.4.2
+host_railsapp::passenger_version: 5.0.30
+host_railsapp::default_rails_version: 5.1.1
+host_railsapp::nginx::passenger::poolidletime: 0
+host_railsapp::nginx::passenger::spawnmethod: direct
+host_railsapp::default_ssl_cert: letsencrypt
